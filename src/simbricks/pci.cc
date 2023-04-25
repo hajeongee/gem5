@@ -84,8 +84,12 @@ Device::introInReceived(const void *data, size_t len)
 
     // fill in BAR details
     for (int i = 0; i < 6; i++) {
-        getSimBricksBar(i)->setup(*this, i, di->bars[i].len,
-            di->bars[i].flags);
+        if (di->bars[i].len > 0) {
+            Bar *bar = getSimBricksBar(i);
+            assert(bar != NULL);
+            bar->setup(*this, i, di->bars[i].len,
+                di->bars[i].flags);
+        }
     }
 
     // Prepare MSI and MSI-X capabilities as needed (ugh)

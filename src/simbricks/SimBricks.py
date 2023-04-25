@@ -90,14 +90,12 @@ class SimBricksPci(PciDevice):
     sync_tx_interval = Param.Latency("500ns", "interval between syncs")
     link_latency = Param.Latency("500ns", "PCI latency")
 
-    BARs = (
-        SimBricksPciBar(),
-        SimBricksPciBar(),
-        SimBricksPciBar(),
-        SimBricksPciBar(),
-        SimBricksPciBar(),
-        SimBricksPciBar(),
-    )
+    BAR0 = SimBricksPciBar()
+    BAR1 = SimBricksPciBar()
+    BAR2 = SimBricksPciBar()
+    BAR3 = SimBricksPciBar()
+    BAR4 = SimBricksPciBar()
+    BAR5 = SimBricksPciBar()
 
     Status = 0x0290
     MaximumLatency = 0x00
