@@ -96,6 +96,9 @@ typedef uint16_t RequestorID;
 
 class Request
 {
+    friend class SplitCPUAdapter;
+    friend class SplitMEMAdapter;
+
   public:
     typedef uint64_t FlagsType;
     typedef uint8_t ArchFlagsType;

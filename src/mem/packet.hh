@@ -75,6 +75,9 @@ typedef uint64_t PacketId;
 class MemCmd
 {
     friend class Packet;
+    friend class SplitCPUAdapter;
+    friend class SplitMEMAdapter;
+
 
   public:
     /**
@@ -292,6 +295,9 @@ class MemCmd
  */
 class Packet : public Printable
 {
+    friend class SplitCPUAdapter;
+    friend class SplitMEMAdapter;
+
   public:
     typedef uint32_t FlagsType;
     typedef gem5::Flags<FlagsType> Flags;
@@ -1523,6 +1529,13 @@ class Packet : public Printable
      * failed transaction, this function returns the failure reason.
      */
     HtmCacheFailure getHtmTransactionFailedInCacheRC() const;
+
+    /**
+     * Returns Flag, for making split-gem5 message
+     *
+     */
+    FlagsType getFlag() { return static_cast<gem5::Packet::FlagsType>(flags);}
+
 };
 
 } // namespace gem5
