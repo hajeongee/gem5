@@ -473,6 +473,10 @@ class Request
     /** The cause for HTM transaction abort */
     HtmFailureFaultCause _htmAbortCause = HtmFailureFaultCause::INVALID;
 
+    /** Simbricks CPU adapter received request sequence number **/
+    uint64_t _sbReqSeq = 0;
+
+
   public:
 
     /**
