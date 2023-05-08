@@ -30,11 +30,13 @@
 #include "sim/sim_object.hh"
 
 namespace gem5 {
+namespace simbricks {
 extern "C" {
 #include <simbricks/base/if.h>
 
 };
-namespace simbricks {
+class SplitCPUAdapter;
+class SplitMEMAdapter;
 
 namespace base {
 
@@ -43,6 +45,8 @@ class Adapter : public EventManager
 {
   private:
     friend class InitManager;
+    friend class gem5::simbricks::SplitCPUAdapter;
+    friend class gem5::simbricks::SplitMEMAdapter;
 
     bool sync;
     bool isListen;

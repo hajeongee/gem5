@@ -67,6 +67,11 @@ namespace gem5
 {
 
 class Packet;
+namespace simbricks {
+    class SplitCPUAdapter;
+    class SplitMEMAdapter;
+};
+
 typedef Packet *PacketPtr;
 typedef uint8_t* PacketDataPtr;
 typedef std::list<PacketPtr> PacketList;
@@ -75,8 +80,8 @@ typedef uint64_t PacketId;
 class MemCmd
 {
     friend class Packet;
-    friend class SplitCPUAdapter;
-    friend class SplitMEMAdapter;
+    friend class simbricks::SplitCPUAdapter;
+    friend class simbricks::SplitMEMAdapter;
 
 
   public:
@@ -295,8 +300,8 @@ class MemCmd
  */
 class Packet : public Printable
 {
-    friend class SplitCPUAdapter;
-    friend class SplitMEMAdapter;
+    friend class simbricks::SplitCPUAdapter;
+    friend class simbricks::SplitMEMAdapter;
 
   public:
     typedef uint32_t FlagsType;
