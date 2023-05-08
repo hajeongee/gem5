@@ -30,11 +30,11 @@
 #include "sim/sim_object.hh"
 
 namespace gem5 {
-namespace simbricks {
 extern "C" {
 #include <simbricks/base/if.h>
 
 };
+namespace simbricks {
 
 namespace base {
 
