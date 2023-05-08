@@ -67,6 +67,11 @@
 namespace gem5
 {
 
+namespace simbricks {
+    class SplitCPUAdapter;
+    class SplitMEMAdapter;
+};
+
 /**
  * Special TaskIds that are used for per-context-switch stats dumps
  * and Cache Occupancy. Having too many tasks seems to be a problem
@@ -96,8 +101,8 @@ typedef uint16_t RequestorID;
 
 class Request
 {
-    friend class SplitCPUAdapter;
-    friend class SplitMEMAdapter;
+    friend class simbricks::SplitCPUAdapter;
+    friend class simbricks::SplitMEMAdapter;
 
   public:
     typedef uint64_t FlagsType;
