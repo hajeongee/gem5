@@ -122,6 +122,17 @@ def addNoISAOptions(parser):
                       speed""",
     )
 
+    # Split Options
+    parser.add_argument(
+        "--splitsim",
+        action="append",
+        type=str,
+        default=[],
+        help="SplitSim URLs to connect to",
+    )
+    parser.add_argument("--split-cpu", type=int, default=0)
+    parser.add_argument("--split-numa", type=int, default=0)
+
     # Memory Options
     parser.add_argument(
         "--list-mem-types",
