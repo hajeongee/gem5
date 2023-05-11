@@ -8,49 +8,6 @@ m5.util.addToPath("../")
 from common.Caches import *
 from common import Options
 
-
-def malformedSplitSimUrl(s):
-    print("Error: SplitSim URL", s, "is malformed")
-    sys.exit(1)
-
-
-# Parse SplitSim "URLs" in the following format:
-# ADDR[ARGS]
-# ADDR = connect:UX_SOCKET_PATH |
-#        listen:UX_SOCKET_PATH:SHM_PATH
-# ARGS = :sync | :link_latency=XX | :sync_interval=XX
-def parseSplitSimUrl(s):
-    out = {"sync": False}
-    parts = s.split(":")
-    if len(parts) < 2:
-        malformedSplitSimUrl(s)
-
-    if parts[0] == "connect":
-        out["listen"] = False
-        out["uxsocket_path"] = parts[1]
-        parts = parts[2:]
-    elif parts[0] == "listen":
-        if len(parts) < 3:
-            malformedSplitSimUrl(s)
-        out["listen"] = True
-        out["uxsocket_path"] = parts[1]
-        out["shm_path"] = parts[2]
-        parts = parts[3:]
-    else:
-        malformedSplitSimUrl(s)
-
-    for p in parts:
-        if p == "sync":
-            out["sync"] = True
-        elif p.startswith("sync_interval="):
-            out["sync_tx_interval"] = p.split("=")[1]
-        elif p.startswith("latency="):
-            out["link_latency"] = p.split("=")[1]
-        else:
-            malformedSplitSimUrl(s)
-    return out
-
-
 parser = argparse.ArgumentParser()
 Options.addCommonOptions(parser)
 Options.addSEOptions(parser)
@@ -85,7 +42,7 @@ system.cpu.icache.mem_side = system.l2bus.cpu_side_ports
 system.cpu.dcache.mem_side = system.l2bus.cpu_side_ports
 
 # Create SimbricksAdapter object and Connect to L2 bus
-params = parseSplitSimUrl(args.splitsim[0])
+params = Options.parseSplitSimUrl(args.splitsim[0])
 params["uxsocket_path"] = params["uxsocket_path"] + f".{args.split_cpu}"
 if params["listen"] == True:
     params["shm_path"] = params["shm_path"] + f".{args.split_cpu}"

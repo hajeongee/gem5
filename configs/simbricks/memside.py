@@ -8,49 +8,6 @@ m5.util.addToPath("../")
 from common.Caches import *
 from common import Options
 
-
-def malformedSplitSimUrl(s):
-    print("Error: SplitSim URL", s, "is malformed")
-    sys.exit(1)
-
-
-# Parse SplitSim "URLs" in the following format:
-# ADDR[ARGS]
-# ADDR = connect:UX_SOCKET_PATH |
-#        listen:UX_SOCKET_PATH:SHM_PATH
-# ARGS = :sync | :link_latency=XX | :sync_interval=XX
-def parseSplitSimUrl(s):
-    out = {"sync": False}
-    parts = s.split(":")
-    if len(parts) < 2:
-        malformedSplitSimUrl(s)
-
-    if parts[0] == "connect":
-        out["listen"] = False
-        out["uxsocket_path"] = parts[1]
-        parts = parts[2:]
-    elif parts[0] == "listen":
-        if len(parts) < 3:
-            malformedSplitSimUrl(s)
-        out["listen"] = True
-        out["uxsocket_path"] = parts[1]
-        out["shm_path"] = parts[2]
-        parts = parts[3:]
-    else:
-        malformedSplitSimUrl(s)
-
-    for p in parts:
-        if p == "sync":
-            out["sync"] = True
-        elif p.startswith("sync_interval="):
-            out["sync_tx_interval"] = p.split("=")[1]
-        elif p.startswith("latency="):
-            out["link_latency"] = p.split("=")[1]
-        else:
-            malformedSplitSimUrl(s)
-    return out
-
-
 parser = argparse.ArgumentParser()
 Options.addCommonOptions(parser)
 Options.addSEOptions(parser)
@@ -72,7 +29,7 @@ mem_adapter_params = []
 i = 0
 url = args.splitsim[0]
 for i in range(args.num_cpus):
-    params = parseSplitSimUrl(url)
+    params = Options.parseSplitSimUrl(url)
     params["uxsocket_path"] = params["uxsocket_path"] + f".{i}"
     if params["listen"] == True:
         params["shm_path"] = params["shm_path"] + f".{i}"
