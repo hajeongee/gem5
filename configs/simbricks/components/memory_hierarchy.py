@@ -21,6 +21,9 @@ class L1_ICache(L1Cache):
 class L1_DCache(L1Cache):
     pass
 
+class TLBWalkerCache(L1Cache):
+    pass
+
 class L2_Cache(Cache):
     size='2MB'
     assoc = 4
@@ -82,7 +85,7 @@ class MyCXbar(CoherentXBar):
     # the crossbar
     snoop_filter = SnoopFilter(lookup_latency=0)
 
-# Crossbar connecting CPU data port and page table walker to L1D
+# Crossbar connecting CPU data porPt and page table walker to L1D
 class L1XBar(MyNcXBar):
     pass
 
@@ -93,18 +96,21 @@ class L2XBar(MyCXbar):
 
 # Crossbar connecting L2 caches to L3
 class L3XBar(MyCXbar):
-    point_of_unification = True
+    pass
 
 
 # Crossbar connecting L3 cache to off-core ports (memory, peer sockets, devices)
 # TODO: presumably needs to be coherent for NUMA
 class OffSocketXBar(MyCXbar):
-    point_of_unification = True
+    #point_of_unification = True
+    pass
 
 # Main memory bus on board, connects all numa nodes together, also legacy
 # devices
 class BoardMemXBar(MyCXbar):
-    point_of_unification = True
+    #point_of_unification = True
+    point_of_coherency = True
+    pass
 
 # Crossbar connecting DMA ports of IO-devices to IO cache
 class IODmaXBar(MyNcXBar):

@@ -153,21 +153,16 @@ def makeSystem(board, mem_mode, disks, kernel, cmdline):
     system.clk_domain =  SrcClockDomain()
     system.clk_domain.clock = '1GHz'
     system.clk_domain.voltage_domain = VoltageDomain()
+    system.mem_mode = mem_mode
 
     system.m5ops_base = 0xFFFF0000
     system.cache_line_size = 64
 
-    workload = X86FsLinux()
-    system.workload = workload
-    system.mem_mode = mem_mode
 
     system.board = board
     board.connect_system(system)
 
     system.mem_ranges = system.board.physmem_ranges()
-
-    makeMPTables(system)
-    makeBiosTables(system)
 
     # prepare serial console
     board.pc_legacy.com_1.device = Terminal(port=3456, outfile="stdoutput")
@@ -177,9 +172,15 @@ def makeSystem(board, mem_mode, disks, kernel, cmdline):
 
     board.pc_legacy.south_bridge.ide.disks = disks
 
+    workload = X86FsLinux()
+    system.workload = workload
     system.workload.object_file = kernel
     system.workload.command_line = cmdline
     
+    makeMPTables(system)
+    makeBiosTables(system)
+
+
     return system
 
 
