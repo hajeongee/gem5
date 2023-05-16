@@ -29,7 +29,7 @@ class SplitCPUAdapter(SimObject):
     shm_path = Param.String("/tmp/splitsim/", "Shared memory path")
     sync = Param.Bool(True, "Synchronized CPUAdapter")
     poll_interval = Param.Latency("100us", "poll interval size (unsync only)")
-    sync_tx_interval = Param.Latency("500ns", "interval between syncs")
+    sync_tx_interval = Param.Latency("10ns", "interval between syncs")
     link_latency = Param.Latency(
         "10ns", "Latency for forwarding request/response"
     )
@@ -58,7 +58,7 @@ class SplitMEMAdapter(SimObject):
     shm_path = Param.String("/tmp/splitsim/", "Shared memory path")
     sync = Param.Bool(True, "synchronized or not")
     poll_interval = Param.Latency("100us", "poll interval size (unsync only)")
-    sync_tx_interval = Param.Latency("500ns", "interval between syncs")
+    sync_tx_interval = Param.Latency("10ns", "interval between syncs")
     link_latency = Param.Latency(
         "10ns", "Latency for forwarding request/response"
     )
