@@ -49,6 +49,9 @@ class MyCPUCore(SubSystem):
         self.cpu.interrupts[0].int_requestor = int_req
         self.cpu.interrupts[0].int_responder = int_resp
 
+    def get_cpu_id(self):
+        return self.cpu.cpu_id
+
 
 class MyCPUSocket(SubSystem):
     def __init__(self, cores):

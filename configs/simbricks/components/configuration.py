@@ -24,7 +24,7 @@ def makeMPTables(system):
     for n in system.board.nodes:
         for core in n.cpu_socket.cores:
             # FIXME: incorrect with SMT
-            cpu_id = core.cpu.cpu_id
+            cpu_id = core.get_cpu_id()
             apic_id = cpu_id
 
             bp = X86IntelMPProcessor(
