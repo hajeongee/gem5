@@ -11,7 +11,7 @@
 namespace gem5 {
 namespace simbricks {
 extern "C" {
-#include <simbricks/gem5_mem/proto.h>
+#include "mem/simbricks/proto.h"
 
 }
 
