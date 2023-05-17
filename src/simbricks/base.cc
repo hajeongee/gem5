@@ -37,8 +37,9 @@ namespace base {
 Adapter::Adapter(SimObject &parent, bool sync_)
     : EventManager(parent),
       sync(sync_), isListen(false), pollInterval(500000),
-      inEvent([this]{ processInEvent(); }, name() + "SimBricksIn"),
-      outSyncEvent([this]{ processOutSyncEvent(); }, name() + "SimBricksSync"),
+      inEvent([this]{ processInEvent(); }, name() + "SimBricksIn", false, 10),
+      outSyncEvent([this]{ processOutSyncEvent(); }, name() + "SimBricksSync",
+                   false, 0),
       pool(nullptr)
 {
 }
