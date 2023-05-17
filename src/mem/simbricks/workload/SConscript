@@ -1,0 +1,8 @@
+Import("*")
+SimObject('Workloads.py',
+        sim_objects=['X86FsWorkloadMem', 'X86FsWorkloadCPU0', 'X86FsWorkloadCPUn',
+                     'X86FsLinuxMem', 'X86FsLinuxCPU0', 'X86FsLinuxCPUn'])
+
+Source('fs_workload.cc')
+Source('fs_linux_workload.cc')
+
