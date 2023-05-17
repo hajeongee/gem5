@@ -147,13 +147,28 @@ def makeBiosTables(system):
 
     system.workload.e820_table.entries = entries
 
+class ConfigParams(object):
+    def __init__(self, mem_mode, disks, kernel, cmdline):
+        self.mem_mode = mem_mode
+        self.disks = disks
+        self.kernel = kernel
+        self.cmdline = cmdline
+        self.workload = X86FsLinux
 
-def makeSystem(board, mem_mode, disks, kernel, cmdline):
+    def make_workload(self):
+        workload = self.workload()
+        workload.object_file = self.kernel
+        workload.command_line = self.cmdline
+        return workload
+
+
+
+def makeSystem(board, config):
     system = System()
     system.clk_domain =  SrcClockDomain()
     system.clk_domain.clock = '1GHz'
     system.clk_domain.voltage_domain = VoltageDomain()
-    system.mem_mode = mem_mode
+    system.mem_mode = config.mem_mode
 
     system.m5ops_base = 0xFFFF0000
     system.cache_line_size = 64
@@ -168,31 +183,14 @@ def makeSystem(board, mem_mode, disks, kernel, cmdline):
     board.pc_legacy.com_1.device = Terminal(port=3456, outfile="stdoutput")
 
     # prepare disks
-    disks = makeCowDisks(disks)
+    disks = makeCowDisks(config.disks)
 
     board.pc_legacy.south_bridge.ide.disks = disks
 
-    workload = X86FsLinux()
-    system.workload = workload
-    system.workload.object_file = kernel
-    system.workload.command_line = cmdline
+    system.workload = config.make_workload()
     
     makeMPTables(system)
     makeBiosTables(system)
 
 
     return system
-
-
-#def makeLinuxX86System(
-#    mem_mode, numCPUs=1, mdesc=None, Ruby=False, cmdline=None
-#):
-#
-#    # Command line
-#    if not cmdline:
-#        cmdline = "earlyprintk=ttyS0 console=ttyS0 root=/dev/sda1 no_timer_check memory_corruption_check=0 random.trust_cpu=on init=/home/ubuntu/guestinit.sh"
-#    self.workload.command_line = fillInCmdline(mdesc, cmdline)
-#    if args.command_line_append:
-#        self.workload.command_line += " " + args.command_line_append
-#    return self
-

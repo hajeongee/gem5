@@ -40,15 +40,17 @@ class MyRemoteSocket(SubSystem):
             self.adapter.int_resp_proxy)
 
 
-def makeSplitDummySystem(rsock):
+def makeSplitDummySystem(rsock, config):
     system = System()
     system.clk_domain =  SrcClockDomain()
     system.clk_domain.clock = '1GHz'
     system.clk_domain.voltage_domain = VoltageDomain()
-    system.mem_mode = 'timing'
+    system.mem_mode = config.mem_mode
     system.m5ops_base = 0xFFFF0000
     system.cache_line_size = 64
 
     system.remote_socket = rsock
+    system.workload = config.make_workload()
+    system.workload.e820_table.entries = []
     return system
 

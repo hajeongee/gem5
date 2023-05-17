@@ -12,7 +12,17 @@ from components.splitsim import *
 path_prefix = 'splitsim'
 num_cores = 2
 
-def create_generic_system(cores):
+base_cfg = ConfigParams(
+    mem_mode='timing',
+    disks=['/local/antoinek/simbricks/images/output-base/base.raw'],
+    kernel='/local/antoinek/simbricks/images/vmlinux',
+    cmdline=(
+        'earlyprintk=ttyS0 console=ttyS0 root=/dev/sda1 no_timer_check '
+        'memory_corruption_check=0 random.trust_cpu=on '
+        'init=/home/ubuntu/guestinit.sh')
+    )
+
+def create_generic_system(cores, cfg):
     sock0 = MyCPUSocket(cores)
     node0 = MyNUMANode(sock0, DDR3_1600_8x8, 0, 512 * 1024 * 1024, 6)
     board = MyNonNumaBoard(node0)
@@ -26,16 +36,7 @@ def create_generic_system(cores):
         InterruptPin=1)
     node0.add_pci_device('pci0', nic0)
 
-    cmdline = (
-        'earlyprintk=ttyS0 console=ttyS0 root=/dev/sda1 no_timer_check '
-        'memory_corruption_check=0 random.trust_cpu=on '
-        'init=/home/ubuntu/guestinit.sh')
-    system = makeSystem(
-        board=board,
-        mem_mode='timing',
-        disks=['/local/antoinek/simbricks/images/output-base/base.raw'],
-        kernel='/local/antoinek/simbricks/images/vmlinux',
-        cmdline=cmdline)
+    system = makeSystem(board, cfg)
     return system
 
 def create_generic_ith_core(i):
@@ -56,7 +57,8 @@ def create_split_main():
         cores.append(MyRemoteCore(f'{path_prefix}/{i}-ux',
                                   f'{path_prefix}/{i}-shm',
                                   i))
-    return create_generic_system(cores)
+    base_cfg.workload = X86FsLinuxMem
+    return create_generic_system(cores, base_cfg)
 
 def create_split_core(i):
     rsock = MyRemoteSocket(
@@ -64,7 +66,8 @@ def create_split_core(i):
         f'{path_prefix}/{i}-ux',
         f'{path_prefix}/{i}-shm'
     )
-    return makeSplitDummySystem(rsock)
+    base_cfg.workload = X86FsLinuxCPU0 if i == 0 else X86FsLinuxCPUn
+    return makeSplitDummySystem(rsock, base_cfg)
 
 mode = sys.argv[1]
 if mode == 'monolith':
