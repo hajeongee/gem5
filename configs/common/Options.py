@@ -172,14 +172,21 @@ def addNoISAOptions(parser):
         default=[],
         help="SplitSim URLs to connect to",
     )
-    parser.add_argument("--split-cpu", type=int, default=0)
     parser.add_argument(
-        "--split-numa",
+        "--split-cpu", type=int, default=0, help="index of the CPU"
+    )
+    parser.add_argument(
+        "--split-numa-num",
+        type=int,
+        default=1,
+        help="number of NUMA node connected to the sysbus.",
+    )
+    parser.add_argument(
+        "--split-numa-idx",
         type=int,
         default=0,
-        help="For sysbus script: number of NUMA node connected to the sysbus. For core and mem script: the NUMA node index which it belongs to",
+        help=" the NUMA node index which it belongs to",
     )
-
     # Memory Options
     parser.add_argument(
         "--list-mem-types",
