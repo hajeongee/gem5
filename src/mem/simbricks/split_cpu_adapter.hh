@@ -136,6 +136,7 @@ class SplitCPUAdapter
   };
 
  protected:
+
   // SimBricks base adapter
   simbricks::base::GenericBaseAdapter<SplitProtoM2C, SplitProtoC2M> adapter;
   bool sync;
@@ -168,6 +169,8 @@ class SplitCPUAdapter
   // the absense of memory module.
   MemSidePort mem_side;
   uint32_t reqCount;
+
+  bool is_init;
 
   // Remembers request packets pointers and
   // <RequestorId, request task_Id> so that

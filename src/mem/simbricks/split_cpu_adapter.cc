@@ -32,7 +32,8 @@ SplitCPUAdapter::SplitCPUAdapter(const SplitCPUAdapterParams &params)
       int_resp_proxy(params.name + ".int_resp_proxy", this),
       pio_proxy(params.name + ".pio_proxy", this),
       mem_side(params.name + ".mem_side", this),
-      reqCount(0) {
+      reqCount(0),
+      is_init(false) {
   DPRINTF(SplitCPUAdapter, "Hello from SplitCPUAdapter!\n");
 
   adapter.cfgSetPollInterval(params.poll_interval);
@@ -68,7 +69,11 @@ Port &SplitCPUAdapter::getPort(const std::string &if_name, PortID idx) {
 }
 
 void SplitCPUAdapter::init() {
-  adapter.init();
+
+  if (!is_init){
+    adapter.init();
+    is_init = true;
+  }
 }
 
 AddrRangeList SplitCPUAdapter::CPUSidePort::getAddrRanges() const {
@@ -167,6 +172,10 @@ void SplitCPUAdapter::MemSidePort::recvRangeChange() {
 }
 
 void SplitCPUAdapter::IntRespProxyPort::recvRangeChange() {
+  if (!owner->is_init){
+    owner->adapter.init();
+    owner->is_init = true;
+  }
   // todo send range change to memside
   AddrRangeList ranges = owner->int_resp_proxy.getAddrRanges();
   if (ranges.size() != 1) {
@@ -191,6 +200,11 @@ void SplitCPUAdapter::IntRespProxyPort::recvRangeChange() {
 }
 
 void SplitCPUAdapter::PioProxyPort::recvRangeChange() {
+
+  if (!owner->is_init){
+    owner->adapter.init();
+    owner->is_init = true;
+  }
   // todo send range change to memside
   AddrRangeList ranges = owner->pio_proxy.getAddrRanges();
   if (ranges.size() != 1) {
@@ -327,6 +341,11 @@ void SplitCPUAdapter::initIfParams(SimbricksBaseIfParams &p) {
 }
 
 void SplitCPUAdapter::handleFunctional(PacketPtr pkt) {
+
+  if (!is_init){
+    adapter.init();
+    is_init = true;
+  }
   // DPRINTF(SplitCPUAdapter, "%s\n", pkt->print());
   volatile union SplitProtoC2M *msg = c2mAlloc(false, true);
   volatile struct SplitGem5Packet *spkt = &msg->packet;
