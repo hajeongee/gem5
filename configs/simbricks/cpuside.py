@@ -21,8 +21,8 @@ system.clk_domain.voltage_domain = VoltageDomain()
 system.mem_mode = "timing"
 # system.mem_ranges = [AddrRange('1GB')]
 
-idv_mem_start = f"{args.split_cpu}GB"
-idv_mem_end = f"{args.split_cpu + 1}GB"
+idv_mem_start = f"{args.split_cpu * 512 }MB"
+idv_mem_end = f"{(args.split_cpu + 1) * 512 }MB"
 system.mem_ranges = [AddrRange(idv_mem_start, idv_mem_end)]
 
 
