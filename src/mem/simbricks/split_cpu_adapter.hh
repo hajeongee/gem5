@@ -12,7 +12,7 @@
 namespace gem5 {
 namespace simbricks {
 extern "C" {
-#include "mem/simbricks/proto.h"
+#include <simbricks/gem5_mem/proto.h>
 
 }
 
@@ -168,6 +168,8 @@ class SplitCPUAdapter
   // the absense of memory module.
   MemSidePort mem_side;
   uint32_t reqCount;
+
+  bool is_init;
 
   // Remembers request packets pointers and
   // <RequestorId, request task_Id> so that

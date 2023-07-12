@@ -11,7 +11,7 @@
 namespace gem5 {
 namespace simbricks {
 extern "C" {
-#include "mem/simbricks/proto.h"
+#include <simbricks/gem5_mem/proto.h>
 
 }
 
@@ -20,21 +20,27 @@ class SplitMEMAdapter
       public simbricks::base::GenericBaseAdapter<SplitProtoC2M,
                                                  SplitProtoM2C>::Interface {
  private:
-  class MEMSidePort : public RequestPort
+  class MEMSidePort : public QueuedRequestPort
   {
    private:
     SplitMEMAdapter *owner;
+    PacketPtr blockedPacket;
+    ReqPacketQueue req_queue;
+    SnoopRespPacketQueue snoopresp_queue;
+
 
    public:
     MEMSidePort(const std::string &name, SplitMEMAdapter *owner)
-        : RequestPort(name, owner), owner(owner) {
+        : QueuedRequestPort(name, owner, req_queue, snoopresp_queue),
+        owner(owner), blockedPacket(nullptr), req_queue(*owner, *this),
+        snoopresp_queue(*owner, *this) {
     }
     // AddrRangeList getAddrRanges() const override;
     std::vector<PacketPtr> blockedPkt;
 
    protected:
     bool recvTimingResp(PacketPtr pkt) override;
-    void recvReqRetry() override;
+    //void recvReqRetry() override;
     //{panic("recvREqRetry no impl\n");}
     void recvRangeChange() override;
   };

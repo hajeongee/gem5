@@ -174,19 +174,19 @@ void SplitMEMAdapter::MEMSidePort::recvRangeChange() {
   DPRINTF(SplitMEMAdapter, "MEMSidePort received range change\n");
 }
 
-void SplitMEMAdapter::MEMSidePort::recvReqRetry() {
-  DPRINTF(SplitMEMAdapter, "MEMSidePort received reqRetry\n");
-  if (blockedPkt.empty()) {
-    panic("retry is empty\n");
-  } else {
-    PacketPtr pkt = blockedPkt.front();
-    blockedPkt.erase(blockedPkt.begin());
-    if (!sendTimingReq(pkt)) {
-      blockedPkt.push_back(pkt);
-      DPRINTF(SplitMEMAdapter, "MEMSidePort failed retry again\n");
-    }
-  }
-}
+// void SplitMEMAdapter::MEMSidePort::recvReqRetry() {
+//   DPRINTF(SplitMEMAdapter, "MEMSidePort received reqRetry\n");
+//   if (blockedPkt.empty()) {
+//     panic("retry is empty\n");
+//   } else {
+//     PacketPtr pkt = blockedPkt.front();
+//     blockedPkt.erase(blockedPkt.begin());
+//     if (!sendTimingReq(pkt)) {
+//       blockedPkt.push_back(pkt);
+//       DPRINTF(SplitMEMAdapter, "MEMSidePort failed retry again\n");
+//     }
+//   }
+// }
 
 void SplitMEMAdapter::PktToMsg(PacketPtr pkt,
                               volatile union SplitProtoM2C *msg,
@@ -389,10 +389,8 @@ void SplitMEMAdapter::handleInMsg(volatile SplitProtoC2M *msg) {
                   pkt->req, pkt->req->_taskId, (enum Command)pkt->cmd.toInt(),
                   pkt->cmd.toString().c_str());
 
-          if (!mem_side.sendTimingReq(pkt)) {
-            // failed to send timing, retry later
-            mem_side.blockedPkt.push_back(pkt);
-          }
+          mem_side.schedTimingReq(pkt, curTick());
+
         } else {
           panic("unknown packet type: %x\n", spkt->pkt_type);
         }
