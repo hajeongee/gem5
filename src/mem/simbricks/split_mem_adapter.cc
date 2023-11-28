@@ -385,11 +385,19 @@ void SplitMEMAdapter::handleInMsg(volatile SplitProtoC2M *msg) {
         } else if (spkt->pkt_type & PACKET_TIMING) {
           DPRINTF(SplitMEMAdapter, "do mem timing req\n");
 
-          DPRINTF(SplitMEMAdapter, "reqptr: %p reqTaskId: %u cmdInt:%u %s\n",
+          DPRINTF(SplitMEMAdapter,
+                  "reqptr: %p reqTaskId: %u cmdInt:%u %s\nflags:%X\n",
                   pkt->req, pkt->req->_taskId, (enum Command)pkt->cmd.toInt(),
-                  pkt->cmd.toString().c_str());
+                  pkt->cmd.toString().c_str(),(uint32_t)spkt->flags);
 
-          mem_side.schedTimingReq(pkt, curTick());
+          if (pkt->isExpressSnoop()){
+            DPRINTF(SplitMEMAdapter, "receive flagtyp express_snoop");
+            mem_side.sendTimingReq(pkt);
+          }
+          else{
+            mem_side.schedTimingReq(pkt, curTick());
+          }
+
 
         } else {
           panic("unknown packet type: %x\n", spkt->pkt_type);
