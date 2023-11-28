@@ -275,7 +275,7 @@ void SplitCPUAdapter::handleInMsg(volatile SplitProtoM2C *msg) {
         //(enum Command)spkt->cmd);
         if (((enum Command)spkt->cmd == ReadResp) |
             ((enum Command)spkt->cmd == ReadExResp) |
-            ((enum Command)spkt->cmd == UpgradeResp)) {
+            ((enum Command)spkt->cmd == UpgradeResp) | 1) {
           DPRINTF(SplitCPUAdapter, "received readResp\n");
           auto search = in_flight.find((uint32_t)spkt->req._reqCount);
           if (search != in_flight.end()) {
