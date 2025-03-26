@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __SST_OUTGOING_REQUEST_BRIDGE_HH__
-#define __SST_OUTGOING_REQUEST_BRIDGE_HH__
+#ifndef __SST_OUTGOING_ETH_REQUEST_BRIDGE_HH__
+#define __SST_OUTGOING_ETH_REQUEST_BRIDGE_HH__
 
 #include <utility>
 #include <vector>
@@ -83,4 +83,4 @@ class OutgoingEthBridge: public SimObject
 
 }; // namespace gem5
 
-#endif //__SST_OUTGOING_REQUEST_BRIDGE_HH__
+#endif //__SST_OUTGOING_ETH_REQUEST_BRIDGE_HH__
