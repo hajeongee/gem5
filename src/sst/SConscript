@@ -26,7 +26,11 @@
 
 Import('*')
 
-SimObject('OutgoingRequestBridge.py', sim_objects=['OutgoingRequestBridge'])
+SimObject('OutgoingRequestBridge.py',
+          sim_objects=['OutgoingRequestBridge', 'OutgoingEthBridge'])
 
 Source('outgoing_request_bridge.cc')
+Source('outgoing_eth_bridge.cc')
 Source('sst_responder_interface.cc')
+
+DebugFlag('SSTOutgoingEthBridge')

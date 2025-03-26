@@ -30,6 +30,7 @@
 
 #include <string>
 
+#include "dev/net/etherpkt.hh"
 #include "mem/port.hh"
 
 /**
@@ -62,6 +63,8 @@ class SSTResponderInterface
     // non-timing request. This function should only be called during the
     // SST construction phrase, i.e. not at simulation time.
     virtual void handleRecvFunctional(PacketPtr pkt) = 0;
+
+    virtual void handleRecvPacket(EthPacketPtr pkt) = 0;
 };
 
 } // namespace gem5

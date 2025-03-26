@@ -24,6 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from m5.objects.Ethernet import EtherInt
 from m5.params import *
 from m5.SimObject import SimObject
 
@@ -37,3 +38,11 @@ class OutgoingRequestBridge(SimObject):
     physical_address_ranges = VectorParam.AddrRange(
         [AddrRange(0x80000000, MaxAddr)], "Physical address ranges."
     )
+
+
+class OutgoingEthBridge(SimObject):
+    type = "OutgoingEthBridge"
+    cxx_header = "sst/outgoing_eth_bridge.hh"
+    cxx_class = "gem5::OutgoingEthBridge"
+
+    int0 = EtherInt("interface 0")
