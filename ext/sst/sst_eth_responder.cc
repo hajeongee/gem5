@@ -24,49 +24,33 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "sst_eth_responder.hh"
 
-#ifndef __SST_RESPONDER_INTERFACE_HH__
-#define __SST_RESPONDER_INTERFACE_HH__
+#include <cassert>
+#include "translator.hh"
 
-#include <string>
 
-#include "dev/net/etherpkt.hh"
-#include "mem/port.hh"
-
-/**
- *  SSTResponderInterface provides an interface specified gem5's expectations
- * on the functionality of an SST Responder. This interfaces expects
- * SST Responder to be able to handle gem5 packet on recvTimingReq(),
- * recvRespRetry(), and recvFunctional().
- */
-
-namespace gem5
+SSTEthResponder::SSTEthResponder(SSTEthResponderSubComponent* owner_)
+    : gem5::SSTResponderInterface()
 {
+    owner = owner_;
+}
 
-class SSTResponderInterface
+SSTEthResponder::~SSTEthResponder()
 {
-  public:
+}
 
-    SSTResponderInterface();
-    virtual ~SSTResponderInterface() {};
+void
+SSTEthResponder::setOutputStream(SST::Output* output_)
+{
+    output = output_;
+}
 
-    // This function is called when OutgoingRequestBridge wants to forward
-    // a gem5 request to SST, i.e. when OutgoingRequestPort::recvTimingReq()
-    // is called.
-    virtual bool handleRecvTimingReq(PacketPtr pkt) = 0;
-
-    // This function is called when OutogingRequestPort::recvRespRetry() is
-    // called.
-    virtual void handleRecvRespRetry() = 0;
-
-    // This function is called when OutgoingRequestBridge wants to send a
-    // non-timing request. This function should only be called during the
-    // SST construction phrase, i.e. not at simulation time.
-    virtual void handleRecvFunctional(PacketPtr pkt) = 0;
-
-    virtual void handleRecvPacket(EthPacketPtr pkt) {};
-};
-
-} // namespace gem5
-
-#endif // __SST_RESPONDER_INTERFACE_HH__
+void
+SSTEthResponder::handleRecvPacket(gem5::EthPacketPtr pkt)
+{
+    auto eth_pkt = Translator::gem5EthPktToSSTEthPkt(
+        pkt
+    );
+    owner->handleEthPacket(eth_pkt);
+}

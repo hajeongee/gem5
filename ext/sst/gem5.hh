@@ -86,7 +86,7 @@
 #include <sst/core/eli/elementinfo.h>
 #include <sst/core/link.h>
 
-#include "sst_responder_subcomponent.hh"
+#include "sst_eth_responder_subcomponent.hh"
 
 class gem5Component: public SST::Component
 {

@@ -28,6 +28,7 @@
 #define __TRANSLATOR_H__
 
 #include <sst/core/interfaces/stdMem.h>
+#include <sst/core/interfaces/simpleNetwork.h>
 #include <sst/core/interfaces/stringEvent.h>
 #include <sst/elements/memHierarchy/memEvent.h>
 #include <sst/elements/memHierarchy/memTypes.h>
@@ -38,6 +39,14 @@ typedef std::unordered_map<SST::Interfaces::StandardMem::Request::id_t,
 
 namespace Translator
 {
+inline SST::Interfaces::SimpleNetwork::Request*
+gem5EthPktToSSTEthPkt(gem5::EthPacketPtr pkt)
+{
+    // Convert the gem5 packet to a SST packet.
+    auto sst_pkt = new SST::Interfaces::SimpleNetwork::Request();
+    return sst_pkt;
+}
+
 
 inline SST::Interfaces::StandardMem::Request*
 gem5RequestToSSTRequest(gem5::PacketPtr pkt,
