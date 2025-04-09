@@ -101,7 +101,7 @@ class SSTEthResponderSubComponent: public SST::SubComponent
     )
 
     SST_ELI_DOCUMENT_PORTS(
-        {"port", "Handling network events", {"memHierarchy.MemEvent", ""}}
+        {"port", "Handling network events", {"simpleNetwork.event", ""}}
     )
 
     SST_ELI_DOCUMENT_PARAMS(

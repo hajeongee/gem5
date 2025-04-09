@@ -109,7 +109,7 @@
 #include <sim/sim_exit.hh>
 #include <sim/stat_control.hh>
 
-#include <sst/outgoing_request_bridge.hh>
+#include <sst/outgoing_eth_bridge.hh>
 
 #include <cassert>
 
@@ -184,7 +184,7 @@ gem5Component::gem5Component(SST::ComponentId_t id, SST::Params& params):
     for (int i = 0 ; i < sstPortCount ; i++) {
         std::cout << sstPortNames[i] << std::endl;
         sstPorts.push_back(
-            loadUserSubComponent<SSTResponderSubComponent>(sstPortNames[i], 0)
+            loadUserSubComponent<SSTEthResponderSubComponent>(sstPortNames[i], 0)
         );
         // If the name defined in the `ports` is incorrect, then the program
         // will crash when calling `setTimeConverter`.

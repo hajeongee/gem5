@@ -113,7 +113,7 @@ class gem5Component: public SST::Component
 
     // We need a list of incoming port names so that we don't need to recompile
     // everytime when we add a new OutgoingBridge from python.
-    std::vector<SSTResponderSubComponent*> sstPorts;
+    std::vector<SSTEthResponderSubComponent*> sstPorts;
     std::vector<std::string> sstPortNames;
     int sstPortCount;
 
@@ -143,8 +143,7 @@ class gem5Component: public SST::Component
 
     SST_ELI_DOCUMENT_SUBCOMPONENT_SLOTS(
         // These are the generally expected ports.
-        {"system_port", "Connection to gem5 system_port", "gem5.gem5Bridge"},
-        {"cache_port", "Connection to gem5 CPU", "gem5.gem5Bridge"}
+        {"eth_port", "Connection to gem5 Eth interface", "gem5.gem5Bridge"}
     )
 
 };
