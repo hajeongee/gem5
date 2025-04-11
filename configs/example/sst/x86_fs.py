@@ -16,7 +16,7 @@ from gem5.isas import ISA
 
 # from gem5.runtime import get_runtime_isa
 
-addToPath("../")
+addToPath("../../")
 
 from common import (
     CacheConfig,
