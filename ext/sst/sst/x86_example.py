@@ -34,10 +34,11 @@ from sst.merlin import *
 eth_link_latency = "500ns"
 memory_size_sst = "500MiB"
 cpu_clock_rate = "2GHz"
+host_id = 0
 
 # We keep a track of all the memory ports that we have.
 sst_ports = {
-    "eth_port" : "system.pc.sst_ethif_0"
+    "eth_port" : f"system.pc.sst_ethif_{host_id}"
 
 }
 
