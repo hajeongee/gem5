@@ -204,12 +204,11 @@ def makeX86System(mem_mode, numCPUs=1, mdesc=None, workload=None, Ruby=False):
             self._devid_next += 1
             self._num_simbricks += 1
 
-        def add_simbricks_e1000_eth(self, url):
-            print("adding simbricks eth:", url)
-            params = parseSimBricksUrl(url)
+        def add_sst_e1000_eth(self):
+            print("adding sst eth")
 
-            ethif = SimBricksEthernet(**params)
-            setattr(self, "simbricks_ethif_" + str(self._num_simbricks), ethif)
+            ethif = OutgoingEthBridge()
+            setattr(self, "sst_ethif_" + str(self._num_simbricks), ethif)
 
             dev = IGbE_e1000(
                 pci_bus=0,
@@ -223,8 +222,6 @@ def makeX86System(mem_mode, numCPUs=1, mdesc=None, workload=None, Ruby=False):
 
             self._devid_next += 1
             self._num_simbricks += 1
-            self.e1000_outgoing_bridge = OutgoingEthBridge()
-            dev.interface = self.e1000_outgoing_bridge.port
 
         def add_simbricks_mem(self, arg):
             [size, addr, as_id, url] = arg.split("@")
@@ -266,8 +263,8 @@ def makeX86System(mem_mode, numCPUs=1, mdesc=None, workload=None, Ruby=False):
     for url in args.simbricks_pci:
         self.pc.add_simbricks_pci(url)
 
-    for url in args.simbricks_eth_e1000:
-        self.pc.add_simbricks_e1000_eth(url)
+    if args.sst_eth_e1000:
+        self.pc.add_sst_e1000_eth()
 
     for url in args.simbricks_mem:
         self.pc.add_simbricks_mem(url)
@@ -593,11 +590,9 @@ parser.add_argument(
     help="Simbricks PCI URLs to connect to",
 )
 parser.add_argument(
-    "--simbricks-eth-e1000",
-    action="append",
-    type=str,
-    default=[],
-    help="Simbricks Ethernet URLs to connect e1000 adapters to",
+    "--sst-eth-e1000",
+    action="store_true",
+    help="Use SST E1000 ethernet interface",
 )
 parser.add_argument(
     "--simbricks-mem",

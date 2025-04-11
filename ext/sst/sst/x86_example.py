@@ -37,7 +37,7 @@ cpu_clock_rate = "2GHz"
 
 # We keep a track of all the memory ports that we have.
 sst_ports = {
-    "eth_port" : "system.e1000_outgoing_bridge"
+    "eth_port" : "system.pc.sst_ethif_0"
 
 }
 
@@ -53,6 +53,7 @@ cpu_params = {
             + f" --cpu-type=TimingSimpleCPU"
             + f" --kernel=/simbricks/images/vmlinux"
             + f" --disk-image=/simbricks/images/output-base/base.raw"
+            + " --sst-eth-e1000"
             + " --caches"
             + " --l2cache"
             + " --l1d_size=32kB"
