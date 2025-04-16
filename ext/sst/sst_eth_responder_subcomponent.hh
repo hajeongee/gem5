@@ -41,6 +41,7 @@
 
 #include <sst/core/eli/elementinfo.h>
 #include <sst/core/link.h>
+#include <sst/elements/merlin/router.h>
 
 // from gem5
 #include <sim/sim_object.hh>

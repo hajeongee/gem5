@@ -57,16 +57,22 @@ SSTEthResponderSubComponent::setTimeConverter(SST::TimeConverter* tc)
     // Get the memory interface
     SST::Params interface_params;
     // This is how you tell the interface the name of the port it should use
-    interface_params.insert("port", "port");
+    interface_params.insert("port_name", "port");
+    interface_params.insert("link_bw", "1GB/s");
     // Loads a “memHierarchy.memInterface” into index 0 of the “memory” slot
     // SHARE_PORTS means the interface can use our port as if it were its own
     // INSERT_STATS means the interface will inherit our statistic
     //   configuration (e.g., if ours are enabled, the interface’s will be too)
     networkInterface = loadAnonymousSubComponent<SST::Interfaces::SimpleNetwork>(
-        "merlin.LinkControl", "eth", 0,
+        "merlin.linkcontrol", "eth", 0,
         SST::ComponentInfo::SHARE_PORTS | SST::ComponentInfo::INSERT_STATS,
         interface_params, vn
     );
+
+    if (!networkInterface) {
+        std::cerr << "Failed to load network interface" << std::endl;
+        assert(false);
+    }
 }
 
 void
@@ -86,17 +92,10 @@ SSTEthResponderSubComponent::setResponseReceiver(
 void
 SSTEthResponderSubComponent::init(unsigned phase)
 {
-    // if (phase == 1) {
-    //     for (auto p: responseReceiver->getInitData()) {
-    //         gem5::Addr addr = p.first;
-    //         std::vector<uint8_t> data = p.second;
-    //         SST::Interfaces::StandardMem::Request* request = \
-    //             new SST::Interfaces::StandardMem::Write(
-    //                 addr, data.size(), data);
-    //         memoryInterface->sendUntimedData(request);
-    //     }
-    // }
-    // memoryInterface->init(phase);
+    if (phase == 1) {
+
+    }
+    networkInterface->init(phase);
 }
 
 void
