@@ -54,6 +54,7 @@ cpu_params = {
             + f" --cpu-type=TimingSimpleCPU"
             + f" --kernel=/simbricks/images/vmlinux"
             + f" --disk-image=/simbricks/images/output-base/base.raw"
+            + f" --disk-image=/simbricks/experiments/out/sst/cfg.client.tar"
             + " --sst-eth-e1000"
             + " --caches"
             + " --l2cache"
