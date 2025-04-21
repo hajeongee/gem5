@@ -609,6 +609,10 @@ parser.add_argument(
     help="append to kernel command line",
 )
 
+parser.add_argument(
+    "--sst-id", type=int, default=0, help="id of this gem5 instance"
+)
+
 args = parser.parse_args()
 
 
@@ -638,5 +642,5 @@ if args.frame_capture:
 
 # Simulation.setWorkCountOptions(sys, args)
 # Simulation.run(args, root, sys, FutureClass, parametrize_cpus=param_cpus)
-
+m5.disableAllListeners()
 m5.instantiate()
