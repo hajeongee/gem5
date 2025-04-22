@@ -24,6 +24,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# When run with multiple MPI ranks
+#  mpirun -n 3 --allow-run-as-root sst --partitioner=sst.self --add-lib-path=./ sst/x86_example.py 
+
 import sst
 import sys
 import os
@@ -90,6 +93,7 @@ gem5_node_0.addParams(cpu_params_0)
 eth_port_0 = gem5_node_0.setSubComponent(port_list[0], "gem5.gem5EthBridge", 0)
 # tell the SubComponent the name of the corresponding SimObject
 eth_port_0.addParams({ "response_receiver_name": sst_ports["eth_port"]})
+eth_port_0.addParam("host_id", host_id)
 
 
 # The second host
@@ -103,6 +107,7 @@ gem5_node_1.addParams(cpu_params_1)
 eth_port_1 = gem5_node_1.setSubComponent(port_list[0], "gem5.gem5EthBridge", 0)
 # tell the SubComponent the name of the corresponding SimObject
 eth_port_1.addParams({ "response_receiver_name": sst_ports["eth_port"]})
+eth_port_1.addParam("host_id", host_id)
 
 # Create a router
 rtr = sst.Component("rtr_0", "merlin.hr_router")

@@ -84,6 +84,7 @@ class SSTEthResponderSubComponent: public SST::SubComponent
     bool findCorrespondingSimObject(gem5::Root* gem5_root);
 
     bool handleEthPacket(SST::Interfaces::SimpleNetwork::Request* request);
+    int host_id;
 
   public: // register the component to SST
     SST_ELI_REGISTER_SUBCOMPONENT_API(SSTEthResponderSubComponent);
@@ -107,7 +108,8 @@ class SSTEthResponderSubComponent: public SST::SubComponent
 
     SST_ELI_DOCUMENT_PARAMS(
         {"response_receiver_name", \
-         "Name of the SimObject receiving the responses"}
+         "Name of the SimObject receiving the responses"},
+        {"host_id",        "Host_ID", 0 },
     )
 
 };

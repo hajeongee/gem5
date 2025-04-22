@@ -41,6 +41,11 @@ SSTEthResponderSubComponent::SSTEthResponderSubComponent(SST::ComponentId_t id,
     gem5SimObjectName = params.find<std::string>("response_receiver_name", "");
     if (gem5SimObjectName == "")
         assert(false && "The response_receiver_name must be specified");
+    
+    host_id = params.find<int>("host_id", -1);
+    if (host_id == -1)
+        assert(false && "The host_id must be specified");
+
 }
 
 SSTEthResponderSubComponent::~SSTEthResponderSubComponent()
@@ -52,7 +57,7 @@ void
 SSTEthResponderSubComponent::setTimeConverter(SST::TimeConverter* tc)
 {
     timeConverter = tc;
-    int vn = 0;
+    int vn = 1;
 
     // Get the memory interface
     SST::Params interface_params;
@@ -129,6 +134,8 @@ SSTEthResponderSubComponent::blocked()
 }
 
 bool 
-handleEthPacket(SST::Interfaces::SimpleNetwork::Request* request){
+SSTEthResponderSubComponent::handleEthPacket(SST::Interfaces::SimpleNetwork::Request* request){
+    std::cout << "Sending out gem5 Eth Packet" << request->dest << std::endl;
+    networkInterface->send(request, 0);
     return true;
 }

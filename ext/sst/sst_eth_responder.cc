@@ -24,6 +24,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include <netinet/if_ether.h>
+#include <netinet/ip.h>
+
 #include "sst_eth_responder.hh"
 
 #include <cassert>
@@ -48,9 +51,18 @@ SSTEthResponder::setOutputStream(SST::Output* output_)
 
 void
 SSTEthResponder::handleRecvPacket(gem5::EthPacketPtr pkt)
-{
+{   
+    // const struct ether_header* eth_hdr =
+    //     reinterpret_cast<const struct ether_header*>(pkt->data);
+    // const struct iphdr* ip_hdr =
+    //     reinterpret_cast<const struct iphdr*>(pkt->data + sizeof(struct ether_header));
+    // std::cout << "Source IP: " << ip_hdr->saddr << " to: " << ip_hdr->daddr << std::endl;
+    
+    
     auto eth_pkt = Translator::gem5EthPktToSSTEthPkt(
         pkt
     );
+    int dest = owner->host_id;
+    eth_pkt->dest = dest;
     owner->handleEthPacket(eth_pkt);
 }
