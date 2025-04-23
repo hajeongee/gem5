@@ -37,6 +37,32 @@
 typedef std::unordered_map<SST::Interfaces::StandardMem::Request::id_t,
                            gem5::PacketPtr> TPacketMap;
 
+class basicEvent : public SST::Event {
+ public:
+  // Constructor
+  basicEvent() : SST::Event() {
+  }
+  basicEvent(std::vector<uint8_t> d) : SST::Event(), payload(d) {}
+
+  // Example data members
+  std::vector<uint8_t> payload;
+
+  virtual basicEvent* clone(void)  override {
+    basicEvent *ret = new basicEvent(payload);
+    return ret;
+}
+  // Events must provide a serialization function that serializes
+  // all data members of the event
+  void serialize_order(SST::Core::Serialization::serializer& ser) override {
+    Event::serialize_order(ser);
+    ser & payload;
+  }
+
+  // Register this event as serializable
+  ImplementSerializable(basicEvent);
+};
+
+
 namespace Translator
 {
 inline SST::Interfaces::SimpleNetwork::Request*
@@ -44,6 +70,11 @@ gem5EthPktToSSTEthPkt(gem5::EthPacketPtr pkt)
 {
     // Convert the gem5 packet to a SST packet.
     auto sst_pkt = new SST::Interfaces::SimpleNetwork::Request();
+    auto event_pkt = new basicEvent();
+    event_pkt->payload = std::vector<uint8_t>(pkt->data, pkt->data + pkt->length);
+    sst_pkt->givePayload(event_pkt);
+    sst_pkt->size_in_bits = pkt->length * 8;
+
     return sst_pkt;
 }
 

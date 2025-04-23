@@ -24,6 +24,7 @@
 
 
 #include "sst_eth_responder_subcomponent.hh"
+#include "translator.hh"
 
 #include <cassert>
 #include <sstream>
@@ -130,10 +131,21 @@ SSTEthResponderSubComponent::portEventHandler(
 {
     // Expect to handle an SST response
     SST::Interfaces::SimpleNetwork::Request* req = networkInterface->recv(vn);
-    if ( req != NULL ) {
-        std::cout << "Received SST packet from: " << req->src << std::endl;
-        delete req;
+    if ( req == NULL ) {
+        assert(false && "Received NULL request");
+        return false;
     }
+    std::cout << "Received SST packet from: " << req->src << std::endl;
+
+    size_t len = req->size_in_bits / 8;
+    gem5::EthPacketPtr packet = std::make_shared<gem5::EthPacketData>(len);
+    packet->length = len;
+    auto event_pkt = dynamic_cast<basicEvent*>(req->takePayload());
+    memcpy(packet->data, (const void *) event_pkt->payload.data(), len);
+    responseReceiver->outgoingPort->sendPacket(packet);
+
+    delete req;
+
     return true;
 }
 
@@ -147,6 +159,7 @@ SSTEthResponderSubComponent::blocked()
 bool 
 SSTEthResponderSubComponent::handleEthPacket(SST::Interfaces::SimpleNetwork::Request* request){
     std::cout << "Sending out gem5 Eth Packet" << request->dest << std::endl;
+    request->setTraceType(SST::Interfaces::SimpleNetwork::Request::FULL);
     networkInterface->send(request, 0);
     return true;
 }
