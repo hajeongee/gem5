@@ -55,9 +55,9 @@ def generate_cpu_params(base_params, host_id):
     params = copy.deepcopy(base_params)
     params["cmd"] = f" --outdir=/simbricks/experiments/out/sst/gem5-out.{host_id}" + params["cmd"]
     if (host_id == 0):
-        params["cmd"] += f" --disk-image=/simbricks/experiments/out/sst/cfg.client.tar"
-    else:
         params["cmd"] += f" --disk-image=/simbricks/experiments/out/sst/cfg.server.tar"
+    else:
+        params["cmd"] += f" --disk-image=/simbricks/experiments/out/sst/cfg.client.tar"
     return params
 
 cpu_params = {
@@ -93,7 +93,8 @@ gem5_node_0.addParams(cpu_params_0)
 eth_port_0 = gem5_node_0.setSubComponent(port_list[0], "gem5.gem5EthBridge", 0)
 # tell the SubComponent the name of the corresponding SimObject
 eth_port_0.addParams({ "response_receiver_name": sst_ports["eth_port"]})
-eth_port_0.addParam("host_id", host_id)
+# host_id is actually the destination's id it forwards the packets to
+eth_port_0.addParam("host_id", 1)
 
 
 # The second host
@@ -107,7 +108,8 @@ gem5_node_1.addParams(cpu_params_1)
 eth_port_1 = gem5_node_1.setSubComponent(port_list[0], "gem5.gem5EthBridge", 0)
 # tell the SubComponent the name of the corresponding SimObject
 eth_port_1.addParams({ "response_receiver_name": sst_ports["eth_port"]})
-eth_port_1.addParam("host_id", host_id)
+# host_id is actually the destination's id it forwards the packets to
+eth_port_1.addParam("host_id", 0)
 
 # Create a router
 rtr = sst.Component("rtr_0", "merlin.hr_router")
