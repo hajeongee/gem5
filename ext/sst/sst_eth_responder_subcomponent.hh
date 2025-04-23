@@ -65,6 +65,8 @@ class SSTEthResponderSubComponent: public SST::SubComponent
     SST::Output* output;
 
     std::string gem5SimObjectName;
+    SST::Interfaces::SimpleNetwork::Handler<SSTEthResponderSubComponent>* recv_notify_functor;
+
 
   public:
     SSTEthResponderSubComponent(SST::ComponentId_t id, SST::Params& params);

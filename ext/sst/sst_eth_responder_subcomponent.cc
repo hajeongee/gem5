@@ -74,10 +74,16 @@ SSTEthResponderSubComponent::setTimeConverter(SST::TimeConverter* tc)
         interface_params, vn
     );
 
+    
     if (!networkInterface) {
         std::cerr << "Failed to load network interface" << std::endl;
         assert(false);
     }
+
+    recv_notify_functor = new SST::Interfaces::SimpleNetwork::Handler<SSTEthResponderSubComponent>(this, &SSTEthResponderSubComponent::portEventHandler);
+
+    networkInterface->setNotifyOnReceive(recv_notify_functor);
+
 }
 
 void
@@ -123,6 +129,11 @@ SSTEthResponderSubComponent::portEventHandler(
     int vn)
 {
     // Expect to handle an SST response
+    SST::Interfaces::SimpleNetwork::Request* req = networkInterface->recv(vn);
+    if ( req != NULL ) {
+        std::cout << "Received SST packet from: " << req->src << std::endl;
+        delete req;
+    }
     return true;
 }
 
