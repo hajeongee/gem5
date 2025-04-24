@@ -87,6 +87,7 @@ class SSTEthResponderSubComponent: public SST::SubComponent
 
     bool handleEthPacket(SST::Interfaces::SimpleNetwork::Request* request);
     int host_id;
+    int dst_id;
 
   public: // register the component to SST
     SST_ELI_REGISTER_SUBCOMPONENT_API(SSTEthResponderSubComponent);
@@ -112,6 +113,7 @@ class SSTEthResponderSubComponent: public SST::SubComponent
         {"response_receiver_name", \
          "Name of the SimObject receiving the responses"},
         {"host_id",        "Host_ID", 0 },
+        {"dst_id",        "destination Host_ID", 0 },
     )
 
 };

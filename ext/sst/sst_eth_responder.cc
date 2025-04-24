@@ -62,7 +62,9 @@ SSTEthResponder::handleRecvPacket(gem5::EthPacketPtr pkt)
     auto eth_pkt = Translator::gem5EthPktToSSTEthPkt(
         pkt
     );
-    int dest = owner->host_id;
+    int dest = owner->dst_id;
+    int src = owner->host_id;
+    eth_pkt->src = src;
     eth_pkt->dest = dest;
     owner->handleEthPacket(eth_pkt);
 }

@@ -46,6 +46,9 @@ SSTEthResponderSubComponent::SSTEthResponderSubComponent(SST::ComponentId_t id,
     host_id = params.find<int>("host_id", -1);
     if (host_id == -1)
         assert(false && "The host_id must be specified");
+    dst_id = params.find<int>("dst_id", -1);
+    if (dst_id == -1)
+        assert(false && "The dst_id must be specified");
 
 }
 
@@ -135,7 +138,7 @@ SSTEthResponderSubComponent::portEventHandler(
         assert(false && "Received NULL request");
         return false;
     }
-    std::cout << "Received SST packet from: " << req->src << std::endl;
+    // std::cout << host_id << ": "<< "Received SST packet from: " << req->src << std::endl;
 
     size_t len = req->size_in_bits / 8;
     gem5::EthPacketPtr packet = std::make_shared<gem5::EthPacketData>(len);
@@ -158,8 +161,8 @@ SSTEthResponderSubComponent::blocked()
 
 bool 
 SSTEthResponderSubComponent::handleEthPacket(SST::Interfaces::SimpleNetwork::Request* request){
-    std::cout << "Sending out gem5 Eth Packet" << request->dest << std::endl;
-    request->setTraceType(SST::Interfaces::SimpleNetwork::Request::FULL);
+    // std::cout << host_id << ": " << "Sending out gem5 Eth Packet to " << request->dest << std::endl;
+    // request->setTraceType(SST::Interfaces::SimpleNetwork::Request::FULL);
     networkInterface->send(request, 0);
     return true;
 }
