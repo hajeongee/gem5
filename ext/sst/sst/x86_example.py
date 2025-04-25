@@ -117,11 +117,11 @@ rtr.setRank(0,0)
 rtr.setSubComponent("topology","merlin.singlerouter",0)
 rtr.addParam("id", 0)
 rtr.addParam("num_ports", 2)
-rtr.addParam("flit_size", "8B")
-rtr.addParam("xbar_bw", "4GB/s")
-rtr.addParam("link_bw", "4GB/s")
-rtr.addParam("input_buf_size", "4kB")
-rtr.addParam("output_buf_size", "4kB")
+rtr.addParam("flit_size", "64B")
+rtr.addParam("xbar_bw", "100GB/s")
+rtr.addParam("link_bw", "100GB/s")
+rtr.addParam("input_buf_size", "8MB")
+rtr.addParam("output_buf_size", "8MB")
 
 
 # Connections
