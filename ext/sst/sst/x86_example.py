@@ -39,6 +39,7 @@ eth_link_latency = "500ns"
 memory_size_sst = "500MiB"
 cpu_clock_rate = "2GHz"
 host_id = 0
+host_pairs = 2
 
 # We keep a track of all the memory ports that we have.
 sst_ports = {
@@ -53,11 +54,14 @@ for port in sst_ports:
 
 def generate_cpu_params(base_params, host_id):
     params = copy.deepcopy(base_params)
-    params["cmd"] = f" --outdir=/simbricks/experiments/out/sst/gem5-out.{host_id}" + params["cmd"]
-    if (host_id == 0):
-        params["cmd"] += f" --disk-image=/simbricks/experiments/out/sst/cfg.server_iperf.tar"
+    if (host_id < host_pairs):
+        # servers
+        params["cmd"] = f" --outdir=/simbricks/experiments/out/sst/gem5-out.server.{host_id}" + params["cmd"]
+        params["cmd"] += f" --disk-image=/simbricks/experiments/out/sst/cfg.server  .{host_id}.tar"
     else:
-        params["cmd"] += f" --disk-image=/simbricks/experiments/out/sst/cfg.client_iperf.tar"
+        # clients
+        params["cmd"] = f" --outdir=/simbricks/experiments/out/sst/gem5-out.client.{host_id - host_pairs}" + params["cmd"]
+        params["cmd"] += f" --disk-image=/simbricks/experiments/out/sst/cfg.client.{host_id - host_pairs}.tar"
     return params
 
 cpu_params = {
@@ -83,60 +87,78 @@ cpu_params = {
 }
 
 
-# The first host
-gem5_node_0 = sst.Component("gem5_node_0", "gem5.gem5Component")
-gem5_node_0.setRank(1,0)
-cpu_params_0 = generate_cpu_params(cpu_params, host_id)
-gem5_node_0.addParams(cpu_params_0)
+server_host_list = []
+client_host_list = []
 
-# for initialization
-eth_port_0 = gem5_node_0.setSubComponent(port_list[0], "gem5.gem5EthBridge", 0)
-# tell the SubComponent the name of the corresponding SimObject
-eth_port_0.addParams({ "response_receiver_name": sst_ports["eth_port"]})
-eth_port_0.addParam("host_id", host_id)
-eth_port_0.addParam("dst_id", 1)
-
-
-# The second host
-host_id += 1
-gem5_node_1 = sst.Component("gem5_node_1", "gem5.gem5Component")
-gem5_node_1.setRank(2,0)
-cpu_params_1 = generate_cpu_params(cpu_params, host_id)
-gem5_node_1.addParams(cpu_params_1)
-
-# for initialization
-eth_port_1 = gem5_node_1.setSubComponent(port_list[0], "gem5.gem5EthBridge", 0)
-# tell the SubComponent the name of the corresponding SimObject
-eth_port_1.addParams({ "response_receiver_name": sst_ports["eth_port"]})
-eth_port_1.addParam("host_id", host_id)
-eth_port_1.addParam("dst_id", 0)
+server_rtr_links = []
+client_rtr_links = []
 
 # Create a router
 rtr = sst.Component("rtr_0", "merlin.hr_router")
 rtr.setRank(0,0)
 rtr.setSubComponent("topology","merlin.singlerouter",0)
 rtr.addParam("id", 0)
-rtr.addParam("num_ports", 2)
+rtr.addParam("num_ports", 2 * host_pairs)
 rtr.addParam("flit_size", "64B")
 rtr.addParam("xbar_bw", "100GB/s")
 rtr.addParam("link_bw", "100GB/s")
 rtr.addParam("input_buf_size", "8MB")
 rtr.addParam("output_buf_size", "8MB")
 
+# Create server hosts
+for i in range(0, host_pairs):
+    host_id = i
 
-# Connections
-# gem5 <-> router
-gem5_rtr_link_0 = sst.Link("gem5_rtr_link_0")
-gem5_rtr_link_0.connect(
-    (eth_port_0, "port", eth_link_latency),
-    (rtr, "port0", eth_link_latency)
-)
+    comp_name = f"server_node_{i}"
+    server_node = sst.Component(comp_name, "gem5.gem5Component")
+    server_node.setRank(i + 1,0)
+    server_cpu_params = generate_cpu_params(cpu_params, i)
+    server_node.addParams(server_cpu_params)
+    server_host_list.append(server_node)
 
-gem5_rtr_link_1 = sst.Link("gem5_rtr_link_1")
-gem5_rtr_link_1.connect(
-    (eth_port_1, "port", eth_link_latency),
-    (rtr, "port1", eth_link_latency)
-)
+    eth_port = server_node.setSubComponent(port_list[0], "gem5.gem5EthBridge", 0)
+    # tell the SubComponent the name of the corresponding SimObject
+    eth_port.addParams({ "response_receiver_name": sst_ports["eth_port"]})
+    eth_port.addParam("host_id", host_id)
+    eth_port.addParam("dst_id", host_id + host_pairs)
+
+    # Create link to the router
+    link_name = f"server_rtr_{i}"
+    port_name = f"port{i}"
+    server_rtr_link = sst.Link(link_name)
+    server_rtr_link.connect(
+        (eth_port, "port", eth_link_latency),
+        (rtr, port_name, eth_link_latency)
+    )
+    server_rtr_links.append(server_rtr_link)
+
+
+# Create client hosts
+for i in range(0, host_pairs):
+    host_id = i + host_pairs
+
+    comp_name = f"client_node_{i}"
+    client_node = sst.Component(comp_name, "gem5.gem5Component")
+    client_node.setRank(i + 1 + host_pairs,0)
+    client_cpu_params = generate_cpu_params(cpu_params, i + host_pairs)
+    client_node.addParams(client_cpu_params)
+    client_host_list.append(client_node)
+
+    eth_port = client_node.setSubComponent(port_list[0], "gem5.gem5EthBridge", 0)
+    # tell the SubComponent the name of the corresponding SimObject
+    eth_port.addParams({ "response_receiver_name": sst_ports["eth_port"]})
+    eth_port.addParam("host_id", host_id)
+    eth_port.addParam("dst_id", host_id - host_pairs)
+
+    # Create link to the router
+    link_name = f"client_rtr_{i}"
+    port_name = f"port{i + host_pairs}"
+    client_rtr_link = sst.Link(link_name)
+    client_rtr_link.connect(
+        (eth_port, "port", eth_link_latency),
+        (rtr, port_name, eth_link_latency)
+    )
+    client_rtr_links.append(client_rtr_link)
 
 # enable Statistics
 stat_params = { "rate" : "0ns" }
