@@ -67,7 +67,9 @@ SSTEthResponderSubComponent::setTimeConverter(SST::TimeConverter* tc)
     SST::Params interface_params;
     // This is how you tell the interface the name of the port it should use
     interface_params.insert("port_name", "port");
-    interface_params.insert("link_bw", "1GB/s");
+    interface_params.insert("link_bw", "10GB/s");
+    interface_params.insert("output_buf_size", "8MB");
+    interface_params.insert("input_buf_size", "8MB");
     // Loads a “memHierarchy.memInterface” into index 0 of the “memory” slot
     // SHARE_PORTS means the interface can use our port as if it were its own
     // INSERT_STATS means the interface will inherit our statistic
