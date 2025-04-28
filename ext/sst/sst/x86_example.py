@@ -31,6 +31,7 @@ import sst
 import sys
 import os
 import copy
+import argparse
 
 from sst import UnitAlgebra
 from sst.merlin import *
@@ -39,7 +40,15 @@ eth_link_latency = "500ns"
 memory_size_sst = "500MiB"
 cpu_clock_rate = "2GHz"
 host_id = 0
-host_pairs = 1
+# host_pairs = 1
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description="Simulate host pairs.")
+parser.add_argument("--host_pairs", type=int, required=True, help="Number of host pairs")
+args = parser.parse_args()
+
+host_pairs = args.host_pairs
+print(f"Host pairss: {host_pairs}")
 
 # We keep a track of all the memory ports that we have.
 sst_ports = {
