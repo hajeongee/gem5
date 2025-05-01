@@ -172,6 +172,6 @@ for i in range(0, host_pairs):
 # enable Statistics
 stat_params = { "rate" : "0ns" }
 sst.setStatisticLoadLevel(7)
-sst.setStatisticOutput("sst.statOutputTXT", {"filepath" : "./sst-stats.txt"})
+sst.setStatisticOutput("sst.statOutputTXT", {"filepath" : "./out/sst-stats.txt"})
 sst.enableAllStatisticsForComponentName("rtr_0", stat_params)
 

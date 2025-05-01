@@ -25,6 +25,7 @@ cleanup() {
 
 trap "cleanup" SIGINT
 
+echo "Starting Timestamp"
 date +%s
 
 echo "$num_pairs pairs"
@@ -32,5 +33,5 @@ echo "$num_cores cores"
 mpirun -n $num_cores --allow-run-as-root sst --partitioner=sst.self --add-lib-path=./ sst/x86_example.py -- --host_pairs=$num_pairs 
 
 
-
+echo "Ending Timestamp"
 date +%s
